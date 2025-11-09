@@ -1,0 +1,35 @@
+{
+  "__inputs": [],
+  "title": "Calling Metrics",
+  "editable": true,
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Active Call Sessions",
+      "datasource": null,
+      "targets": [
+        {
+          "expr": "sum(call_attempts_total)",
+          "format": "time_series",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Wallet Top Ups",
+      "datasource": null,
+      "targets": [
+        {
+          "expr": "rate(wallet_topup_value[5m])",
+          "legendFormat": "Top ups",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "version": 1
+}

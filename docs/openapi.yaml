@@ -1,0 +1,396 @@
+openapi: 3.1.0
+info:
+  title: International Calling API
+  version: 0.1.0
+servers:
+  - url: https://api.example.com
+    description: Production
+  - url: http://localhost:8080
+    description: Local development
+tags:
+  - name: Auth
+  - name: Users
+  - name: Wallet
+  - name: Rates
+  - name: Calls
+  - name: Webhooks
+  - name: Admin
+paths:
+  /auth/request-otp:
+    post:
+      tags: [Auth]
+      summary: Request a one-time password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtpRequest'
+      responses:
+        '200':
+          description: OTP issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestOtpResponse'
+  /auth/verify-otp:
+    post:
+      tags: [Auth]
+      summary: Verify OTP and obtain JWT tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpRequest'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh an access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Refreshed tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /me:
+    get:
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+    patch:
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /me/wallet:
+    get:
+      tags: [Wallet]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Wallet info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletResponse'
+  /me/limits:
+    get:
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Spend limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpendLimitResponse'
+  /wallet/topup-intent:
+    post:
+      tags: [Wallet]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopupIntentRequest'
+      responses:
+        '200':
+          description: Stripe client secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopupIntentResponse'
+  /wallet/entries:
+    get:
+      tags: [Wallet]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Wallet ledger
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WalletEntryResponse'
+  /rates:
+    get:
+      tags: [Rates]
+      parameters:
+        - in: query
+          name: country
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Country rates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RateResponse'
+  /rates/search:
+    get:
+      tags: [Rates]
+      parameters:
+        - in: query
+          name: prefix
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prefix matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RateResponse'
+  /calls/outbound:
+    post:
+      tags: [Calls]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutboundCallRequest'
+      responses:
+        '200':
+          description: Call authorization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutboundCallResponse'
+  /calls/history:
+    get:
+      tags: [Calls]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Call history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CallHistoryResponse'
+  /webhooks/stripe:
+    post:
+      tags: [Webhooks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Acknowledge webhook
+  /webhooks/voice:
+    post:
+      tags: [Webhooks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Acknowledge webhook
+  /admin/users/{id}/credit:
+    post:
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreditRequest'
+      responses:
+        '204':
+          description: Credit queued
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RequestOtpRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+      required: [phone]
+    RequestOtpResponse:
+      type: object
+      properties:
+        phoneE164:
+          type: string
+        debugOtp:
+          type: string
+    VerifyOtpRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        code:
+          type: string
+      required: [phone, code]
+    RefreshRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required: [refreshToken]
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        tokens:
+          $ref: '#/components/schemas/TokenResponse'
+        user:
+          $ref: '#/components/schemas/UserResponse'
+    UserResponse:
+      type: object
+      properties:
+        id: { type: string }
+        phoneE164: { type: string }
+        timezone: { type: string }
+        locale: { type: string }
+        kycStatus: { type: string }
+        roles:
+          type: array
+          items: { type: string }
+    UpdateUserRequest:
+      type: object
+      properties:
+        timezone: { type: string }
+        locale: { type: string }
+    WalletResponse:
+      type: object
+      properties:
+        balanceCents: { type: integer, format: int64 }
+        updatedAt: { type: string, format: date-time }
+    WalletEntryResponse:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string }
+        amountCents: { type: integer, format: int64 }
+        reference: { type: string }
+        createdAt: { type: string, format: date-time }
+    TopupIntentRequest:
+      type: object
+      properties:
+        amountCents: { type: integer, minimum: 100 }
+      required: [amountCents]
+    TopupIntentResponse:
+      type: object
+      properties:
+        clientSecret: { type: string }
+    RateResponse:
+      type: object
+      properties:
+        id: { type: string }
+        countryIso: { type: string }
+        prefix: { type: string }
+        ratePerMinuteCents: { type: integer }
+        currency: { type: string }
+        effectiveFrom: { type: string, format: date-time }
+        effectiveTo: { type: string, format: date-time, nullable: true }
+        peak: { type: boolean }
+    OutboundCallRequest:
+      type: object
+      properties:
+        to: { type: string }
+      required: [to]
+    OutboundCallResponse:
+      type: object
+      properties:
+        callSessionId: { type: string }
+        dialString: { type: string }
+        reservedCents: { type: integer }
+        currency: { type: string }
+        ratePerMinuteCents: { type: integer }
+    CallHistoryResponse:
+      type: object
+      properties:
+        id: { type: string }
+        direction: { type: string }
+        from: { type: string }
+        to: { type: string }
+        startTs: { type: string, format: date-time }
+        endTs: { type: string, format: date-time }
+        costCents: { type: integer }
+        status: { type: string }
+    SpendLimitResponse:
+      type: object
+      properties:
+        dailyCapCents: { type: integer }
+        perCallCapCents: { type: integer }
+    AdminCreditRequest:
+      type: object
+      properties:
+        amountCents: { type: integer, minimum: 1 }
+      required: [amountCents]

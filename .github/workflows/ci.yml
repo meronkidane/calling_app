@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Prepare Gradle wrapper
+        run: ./scripts/setup-gradle-wrapper.sh
+      - name: Build & Test
+        working-directory: backend
+        run: ./gradlew clean build --stacktrace
+
+  mobile:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Install dependencies
+        working-directory: mobile
+        run: flutter pub get
+      - name: Analyze
+        working-directory: mobile
+        run: flutter analyze
+      - name: Run tests
+        working-directory: mobile
+        run: flutter test
+
+  docker:
+    runs-on: ubuntu-22.04
+    needs: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Prepare Gradle wrapper
+        run: ./scripts/setup-gradle-wrapper.sh
+      - name: Build boot jar
+        working-directory: backend
+        run: ./gradlew bootJar
+      - name: Build Docker image
+        run: docker build -t calling-backend:ci -f backend/Dockerfile backend

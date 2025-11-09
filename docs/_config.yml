@@ -1,0 +1,17 @@
+title: International Calling Documentation
+description: Developer onboarding and operations guide
+theme: minima
+baseurl: ""
+url: "http://localhost:4000"
+
+markdown: kramdown
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+defaults:
+  -
+    scope:
+      path: ""
+    values:
+      layout: "default"

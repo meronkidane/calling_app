@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: calling-backend
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/calling}
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: optional
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  level:
+    org.springframework.web: INFO
+    com.example.callingapp: DEBUG
+  pattern:
+    console: '{"timestamp":"%d{ISO8601}","level":"%p","thread":"%t","logger":"%c","message":"%m","mdc":%X}%n'
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:changeme}
+    issuer: ${JWT_ISSUER:calling-app}
+    access-token-ttl: ${JWT_ACCESS_TTL:PT15M}
+    refresh-token-ttl: ${JWT_REFRESH_TTL:P30D}
+  auth:
+    sandbox: ${AUTH_SANDBOX:true}
+    sandbox-master-otp: ${AUTH_MASTER_OTP:000000}
+    default-region: ${AUTH_DEFAULT_REGION:US}
+  ratelimit:
+    ip-window: PT1M
+    ip-capacity: 60
+    user-window: PT1M
+    user-capacity: 120
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:sk_test_xxx}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_xxx}
+    currency: ${STRIPE_CURRENCY:usd}
+  telnyx:
+    api-key: ${TELNYX_API_KEY:telnyx_xxx}
+    sip-domain: ${TELNYX_SIP_DOMAIN:example.telnyx.com}
+    default-trunk-alias: ${TELNYX_DEFAULT_TRUNK:default}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  main:
+    banner-mode: "off"
+logging:
+  level:
+    com.example.callingapp: DEBUG
+app:
+  auth:
+    sandbox: true

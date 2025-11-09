@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  mongo1:
+    image: mongo:7.0
+    container_name: calling-mongo1
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo2:
+    image: mongo:7.0
+    container_name: calling-mongo2
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo2-data:/data/db
+
+  mongo-setup:
+    image: mongo:7.0
+    depends_on:
+      - mongo1
+      - mongo2
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      "until mongosh --host mongo1 --eval 'db.adminCommand(\"ping\")'; do sleep 2; done &&
+       mongosh --host mongo1 --eval '
+          rs.initiate({_id:\"rs0\", members:[
+            {_id:0, host:\"mongo1:27017\"},
+            {_id:1, host:\"mongo2:27017\"}
+          ]});
+          rs.status();
+       '"
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: calling-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:10.4.3
+    container_name: calling-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    container_name: calling-zipkin
+    ports:
+      - "9411:9411"
+
+  # Optional: Uncomment to run local Asterisk SBC with Telnyx trunk (requires manual config)
+  # asterisk:
+  #   image: andrius/asterisk
+  #   container_name: calling-asterisk
+  #   volumes:
+  #     - ./asterisk/sip.conf:/etc/asterisk/sip.conf
+  #     - ./asterisk/extensions.conf:/etc/asterisk/extensions.conf
+  #   ports:
+  #     - "5060:5060/udp"
+  #     - "5060:5060/tcp"
+  #     - "10000-10100:10000-10100/udp"
+
+volumes:
+  mongo1-data:
+  mongo2-data:
