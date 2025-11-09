@@ -1,0 +1,71 @@
+{
+  "info": {
+    "name": "Calling API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "8b9f6769-7b7f-4cc3-92d1-16ab3a4cbabc"
+  },
+  "item": [
+    {
+      "name": "Auth - Request OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"+15555551234\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{api_base}}/auth/request-otp"
+      }
+    },
+    {
+      "name": "Auth - Verify OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"+15555551234\",\n  \"code\": \"000000\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{api_base}}/auth/verify-otp"
+      }
+    },
+    {
+      "name": "Wallet - Top up intent",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amountCents\": 1000\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{api_base}}/wallet/topup-intent"
+      }
+    },
+    {
+      "name": "Calls - Initiate Outbound",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"to\": \"+441234567890\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{api_base}}/calls/outbound"
+      }
+    }
+  ],
+  "variable": [
+    { "key": "api_base", "value": "http://localhost:8080" },
+    { "key": "access_token", "value": "" }
+  ]
+}

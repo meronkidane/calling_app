@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant "Mobile App" as Mobile
+participant "Backend API" as API
+participant "Telnyx" as Telnyx
+participant "MongoDB" as Mongo
+
+User -> Mobile : Dial E.164 number
+Mobile -> API : POST /calls/outbound
+API -> Mongo : Reserve wallet + create CallSession
+API -> Mobile : Call authorization + SIP credentials
+Mobile -> Telnyx : SIP INVITE (WebSocket)
+Telnyx -> API : webhook call.initiated
+API -> Mongo : attach sipCallId
+Telnyx -> Mobile : 200 OK\n(RTP media established)
+Telnyx -> API : webhook call.hangup (duration)
+API -> Mongo : Write CDR + adjust wallet
+API -> Mobile : RSocket balance update
+Mobile -> User : Display updated balance/history
+@enduml
