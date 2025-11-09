@@ -1,3 +1,4 @@
+import 'package:calling_app/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class HistoryScreen extends StatelessWidget {
@@ -6,7 +7,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Call History')),
+      appBar: AppBar(title: Text(context.loc.translate('history_title'))),
       body: ListView.builder(
         itemCount: 6,
         itemBuilder: (context, index) {

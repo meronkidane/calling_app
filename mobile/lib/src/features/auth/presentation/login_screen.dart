@@ -1,4 +1,5 @@
 import 'package:calling_app/src/features/auth/application/auth_controller.dart';
+import 'package:calling_app/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,10 +25,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final loc = context.loc;
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in')),
+      appBar: AppBar(title: Text(loc.translate('sign_in_title'))),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -38,12 +40,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Phone number',
-                  hintText: '+1 555 555 1234',
+                decoration: InputDecoration(
+                  labelText: loc.translate('phone_input_label'),
+                  hintText: loc.translate('phone_input_hint'),
                 ),
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter phone number' : null,
+                    value == null || value.isEmpty ? loc.translate('validation_phone_required') : null,
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -52,17 +54,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onPressed: isLoading ? null : _submit,
                   child: isLoading
                       ? const CircularProgressIndicator.adaptive()
-                      : const Text('Request OTP'),
+                      : Text(loc.translate('request_otp_button')),
                 ),
               ),
               if (_debugOtp != null) ...[
                 const SizedBox(height: 12),
                 Text(
-                  'Sandbox OTP: $_debugOtp',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.orange),
+                  loc.translate('sandbox_otp_label', params: {'code': _debugOtp!}),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.orange),
                 ),
               ],
             ],
@@ -86,7 +85,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send OTP: $err')),
+        SnackBar(content: Text('${context.loc.translate('failed_send_otp')}: $err')),
       );
     }
   }

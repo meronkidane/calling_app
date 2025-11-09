@@ -4,6 +4,7 @@ This repository houses a production-ready international calling platform compose
 
 - **Backend**: Java 21, Spring Boot 3, reactive MongoDB, RSocket, Stripe, Telnyx.
 - **Mobile**: Flutter (Riverpod, go_router, Dio, flutter_sip_ua) targeting Android first.
+- **UI**: Material design on Android, native Cupertino on iOS with localization for `en_US`, `am_ET`, and `ti_ER`.
 - **Infra**: Docker Compose stack for Mongo replica set, Prometheus, Grafana, Zipkin (optional Asterisk SBC).
 - **Docs**: OpenAPI spec, ADRs, runbooks, Postman collection, sequence diagrams.
 

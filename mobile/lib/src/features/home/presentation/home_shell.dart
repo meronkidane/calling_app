@@ -1,3 +1,4 @@
+import 'package:calling_app/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,21 +22,23 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
     return Scaffold(
       body: widget.child,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/dialer'),
         icon: const Icon(Icons.dialer_sip),
-        label: const Text('Dialer'),
+        label: Text(loc.translate('nav_dialer')),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (index) => _onTap(index, context),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.public), label: 'Rates'),
-          NavigationDestination(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
-          NavigationDestination(icon: Icon(Icons.history), label: 'History'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.public), label: loc.translate('nav_rates')),
+          NavigationDestination(
+              icon: const Icon(Icons.account_balance_wallet), label: loc.translate('nav_wallet')),
+          NavigationDestination(icon: const Icon(Icons.history), label: loc.translate('nav_history')),
+          NavigationDestination(icon: const Icon(Icons.settings), label: loc.translate('nav_settings')),
         ],
       ),
     );

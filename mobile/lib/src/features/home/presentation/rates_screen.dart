@@ -1,3 +1,4 @@
+import 'package:calling_app/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class RatesScreen extends StatelessWidget {
@@ -6,7 +7,7 @@ class RatesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rates')),
+      appBar: AppBar(title: Text(context.loc.translate('rates_title'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: const [

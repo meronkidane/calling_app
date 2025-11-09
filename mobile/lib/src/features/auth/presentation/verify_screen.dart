@@ -1,4 +1,5 @@
 import 'package:calling_app/src/features/auth/application/auth_controller.dart';
+import 'package:calling_app/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,17 +26,18 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final loc = context.loc;
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify OTP')),
+      appBar: AppBar(title: Text(loc.translate('verify_title'))),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'We sent a verification code to ${widget.phone}',
+              loc.translate('verify_message', params: {'phone': widget.phone}),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),
@@ -44,9 +46,9 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
               child: TextFormField(
                 controller: _codeController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'One-time code'),
+                decoration: InputDecoration(labelText: loc.translate('otp_input_label')),
                 validator: (value) =>
-                    value == null || value.length < 4 ? 'Invalid code' : null,
+                    value == null || value.isEmpty ? loc.translate('validation_code_required') : null,
               ),
             ),
             const SizedBox(height: 24),
@@ -56,7 +58,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                 onPressed: isLoading ? null : _submit,
                 child: isLoading
                     ? const CircularProgressIndicator.adaptive()
-                    : const Text('Verify & Continue'),
+                    : Text(loc.translate('verify_button')),
               ),
             ),
           ],
@@ -77,7 +79,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Verification failed: $err')),
+        SnackBar(content: Text('${context.loc.translate('verification_failed')}: $err')),
       );
     }
   }
