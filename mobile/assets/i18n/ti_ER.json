@@ -38,5 +38,8 @@
   "nav_wallet": "ወለንቲ",
   "nav_history": "ታሪኽ",
   "nav_settings": "ቅንብራት",
-  "nav_dialer": "መደዋዊ"
+  "nav_dialer": "መደዋዊ",
+  "validation_fields_required": "ቦታታት ሙሉእ ሙሉእ ሑሩዩ",
+  "wallet_recent_activity": "ቅሩብ ተግባር",
+  "ok": "እሺ"
 }

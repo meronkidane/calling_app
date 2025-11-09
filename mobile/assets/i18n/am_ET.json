@@ -38,5 +38,8 @@
   "nav_wallet": "ዋሌት",
   "nav_history": "ታሪክ",
   "nav_settings": "ቅንብሮች",
-  "nav_dialer": "መደወል"
+  "nav_dialer": "መደወል",
+  "validation_fields_required": "ሁሉንም መስኮች ያስገቡ",
+  "wallet_recent_activity": "የቅርብ ተግባር",
+  "ok": "እሺ"
 }

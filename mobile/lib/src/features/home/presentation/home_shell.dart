@@ -1,4 +1,5 @@
 import 'package:calling_app/src/l10n/app_localizations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,6 +24,80 @@ class _HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) {
     final loc = context.loc;
+    final platform = Theme.maybeOf(context)?.platform ?? defaultTargetPlatform;
+    final isCupertino = platform == TargetPlatform.iOS;
+
+    final destinations = [
+      NavigationDestination(icon: const Icon(Icons.public), label: loc.translate('nav_rates')),
+      NavigationDestination(
+        icon: const Icon(Icons.account_balance_wallet),
+        label: loc.translate('nav_wallet'),
+      ),
+      NavigationDestination(icon: const Icon(Icons.history), label: loc.translate('nav_history')),
+      NavigationDestination(icon: const Icon(Icons.settings), label: loc.translate('nav_settings')),
+    ];
+
+    if (isCupertino) {
+      final bottomInset = MediaQuery.of(context).viewPadding.bottom;
+      return CupertinoPageScaffold(
+        child: Stack(
+          children: [
+              SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: widget.child,
+                      ),
+                    ),
+                    CupertinoTabBar(
+                    currentIndex: _index,
+                    onTap: (index) => _onTap(index, context),
+                      items: [
+                        BottomNavigationBarItem(
+                          icon: const Icon(CupertinoIcons.globe),
+                          label: loc.translate('nav_rates'),
+                        ),
+                        BottomNavigationBarItem(
+                          icon: const Icon(CupertinoIcons.wallet),
+                          label: loc.translate('nav_wallet'),
+                        ),
+                        BottomNavigationBarItem(
+                          icon: const Icon(CupertinoIcons.time),
+                          label: loc.translate('nav_history'),
+                        ),
+                        BottomNavigationBarItem(
+                          icon: const Icon(CupertinoIcons.settings),
+                          label: loc.translate('nav_settings'),
+                        ),
+                    ],
+                    activeColor: CupertinoColors.activeBlue,
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              right: 16,
+              bottom: bottomInset + 72,
+              child: CupertinoButton.filled(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                onPressed: () => context.push('/dialer'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(CupertinoIcons.phone),
+                    const SizedBox(width: 8),
+                    Text(loc.translate('nav_dialer')),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       body: widget.child,
       floatingActionButton: FloatingActionButton.extended(
@@ -33,13 +108,7 @@ class _HomeShellState extends State<HomeShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (index) => _onTap(index, context),
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.public), label: loc.translate('nav_rates')),
-          NavigationDestination(
-              icon: const Icon(Icons.account_balance_wallet), label: loc.translate('nav_wallet')),
-          NavigationDestination(icon: const Icon(Icons.history), label: loc.translate('nav_history')),
-          NavigationDestination(icon: const Icon(Icons.settings), label: loc.translate('nav_settings')),
-        ],
+        destinations: destinations,
       ),
     );
   }

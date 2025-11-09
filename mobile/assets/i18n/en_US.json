@@ -38,5 +38,8 @@
   "nav_wallet": "Wallet",
   "nav_history": "History",
   "nav_settings": "Settings",
-  "nav_dialer": "Dialer"
+  "nav_dialer": "Dialer",
+  "validation_fields_required": "Please fill in all fields",
+  "wallet_recent_activity": "Recent activity",
+  "ok": "OK"
 }

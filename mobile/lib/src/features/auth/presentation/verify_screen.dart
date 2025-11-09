@@ -1,3 +1,5 @@
+import 'package:calling_app/src/core/utils/platform_feedback.dart';
+import 'package:calling_app/src/core/widgets/platform_scaffold.dart';
 import 'package:calling_app/src/features/auth/application/auth_controller.dart';
 import 'package:calling_app/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -29,24 +31,32 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
     final loc = context.loc;
     final isLoading = authState.isLoading;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(loc.translate('verify_title'))),
-      body: Padding(
+    return PlatformScaffold(
+      title: loc.translate('verify_title'),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              loc.translate('verify_message', params: {'phone': widget.phone}),
-              style: Theme.of(context).textTheme.bodyLarge,
+              loc.translate('verify_title'),
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            Text(
+              loc.translate('verify_message', params: {'phone': widget.phone}),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 24),
             Form(
               key: _formKey,
               child: TextFormField(
                 controller: _codeController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: loc.translate('otp_input_label')),
+                decoration: InputDecoration(
+                  labelText: loc.translate('otp_input_label'),
+                  border: const OutlineInputBorder(),
+                ),
                 validator: (value) =>
                     value == null || value.isEmpty ? loc.translate('validation_code_required') : null,
               ),
@@ -57,7 +67,11 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
               child: FilledButton(
                 onPressed: isLoading ? null : _submit,
                 child: isLoading
-                    ? const CircularProgressIndicator.adaptive()
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : Text(loc.translate('verify_button')),
               ),
             ),
@@ -78,9 +92,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
       context.go('/home');
     } catch (err) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${context.loc.translate('verification_failed')}: $err')),
-      );
+      showPlatformMessage(context, '${context.loc.translate('verification_failed')}: $err');
     }
   }
 }
