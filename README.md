@@ -22,7 +22,7 @@ scripts/        Developer tooling + seed scripts
 
 ### Prerequisites
 
-- JDK 21
+- JDK 17
 - Docker + Docker Compose v2
 - Flutter 3.24+ (stable channel)
 - Android Studio (emulator) or physical device
@@ -136,9 +136,9 @@ Custom metrics exposed:
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/ci.yml`) runs:
-- Backend build & tests
-- Flutter analyzer & tests
-- Docker image build (backend)
+  - Backend build & tests (Gradle 9.2.0, JDK 17)
+  - Flutter analyzer & tests
+  - Docker image build (backend)
 
 ## Documentation
 

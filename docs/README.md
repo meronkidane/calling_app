@@ -10,8 +10,8 @@ This guide walks through setting up the monorepo locally, running the backend an
 | --- | --- | --- |
 | Git | latest | Clone and manage the repository |
 | Docker + Docker Compose v2 | latest | Run MongoDB replica set, Prometheus, Grafana, Zipkin |
-| JDK | 21 | Build the Spring Boot backend |
-| Gradle Wrapper | `./scripts/setup-gradle-wrapper.sh` installs Gradle 8.10.x locally |
+| JDK | 17 | Build the Spring Boot backend |
+| Gradle Wrapper | `./scripts/setup-gradle-wrapper.sh` installs Gradle 9.2.0 locally |
 | Flutter | 3.24 (stable) | Build/run the mobile app |
 | Android Studio / SDK tools | latest | Emulator + platform tools |
 | Ruby | 3.1+ | Serve documentation with Jekyll |
@@ -31,7 +31,7 @@ git clone https://github.com/your-org/international-calling-app.git
 cd international-calling-app
 ```
 
-1. Install Gradle wrapper (downloads Gradle 8.10.1 to `backend/gradle/wrapper`):
+1. Install Gradle wrapper (downloads Gradle 9.2.0 to `backend/gradle/wrapper`):
 
    ```bash
    ./scripts/setup-gradle-wrapper.sh
@@ -82,7 +82,7 @@ Create `backend/.env.local` (optional) or export variables before running:
 
 ```bash
 export JWT_SECRET=changeme
-export MONGO_URI=mongodb://localhost:27017,c localhost:27018/calling?replicaSet=rs0
+export MONGO_URI=mongodb://localhost:27017,localhost:27018/calling?replicaSet=rs0
 export STRIPE_SECRET_KEY=sk_test_xxx
 export STRIPE_WEBHOOK_SECRET=whsec_xxx
 export TELNYX_API_KEY=telnyx_xxx
@@ -149,7 +149,7 @@ CI runs from `.github/workflows/ci.yml` and triggers on pushes to `main` and pul
 
 Jobs:
 
-1. **backend**: installs JDK 21, runs `./scripts/setup-gradle-wrapper.sh`, executes `./backend/gradlew clean build`.
+1. **backend**: installs JDK 17, runs `./scripts/setup-gradle-wrapper.sh`, executes `./backend/gradlew clean build`.
 2. **mobile**: configures Flutter stable, runs `flutter pub get`, `flutter analyze`, and `flutter test`.
 3. **docker**: depends on backend; builds the Spring Boot jar and creates a Docker image via `docker build`.
 
