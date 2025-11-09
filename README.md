@@ -147,6 +147,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs:
 - `docs/ADRs`: architectural decisions
 - `docs/sequence-diagrams/outbound-call.puml`: call flow
 - `docs/runbooks.md`: operational runbooks
+- `docs/README.md`: step-by-step setup guide and Jekyll docs portal (`bundle exec jekyll serve`)
 
 ## Troubleshooting
 
